@@ -11,7 +11,7 @@
 
     <groupId>io.github.pantovad.nexus</groupId>
     <artifactId>nexus-casc-plugin</artifactId>
-    <version>3.64.0.4</version>
+    <version>3.64.0-04</version>
     <packaging>bundle</packaging>
 
     <name>nexus-casc-plugin</name>
