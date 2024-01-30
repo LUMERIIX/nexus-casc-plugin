@@ -22,6 +22,7 @@ import org.sonatype.nexus.security.privilege.NoSuchPrivilegeException;
 import org.sonatype.nexus.security.privilege.Privilege;
 import org.sonatype.nexus.security.realm.RealmManager;
 import org.sonatype.nexus.security.realm.SecurityRealm;
+import org.sonatype.nexus.security.realm.RealmConfiguration;
 import org.sonatype.nexus.security.role.NoSuchRoleException;
 import org.sonatype.nexus.security.role.Role;
 import org.sonatype.nexus.security.role.RoleIdentifier;
@@ -92,6 +93,7 @@ public class SecurityConfigHandler {
 
     private final AnonymousManager anonymousManager;
     private final RealmManager realmManager;
+    private final RealmConfiguration realmConfiguration;
     private final SecurityApi securityApi;
     private final SecuritySystem securitySystem;
     private final LdapConfigurationManager ldapConfigurationManager;
@@ -101,12 +103,14 @@ public class SecurityConfigHandler {
     SecurityConfigHandler(
             final AnonymousManager anonymousManager,
             final RealmManager realmManager,
+            final RealmConfiguration realmConfiguration,
             final SecurityApi securityApi,
             final SecuritySystem securitySystem,
             final LdapConfigurationManager ldapConfigurationManager,
             final TrustStore trustStore) {
         this.anonymousManager = anonymousManager;
         this.realmManager = realmManager;
+        this.realmConfiguration = realmConfiguration;
         this.securityApi = securityApi;
         this.securitySystem = securitySystem;
         this.ldapConfigurationManager = ldapConfigurationManager;
@@ -501,7 +505,7 @@ public class SecurityConfigHandler {
 
     private List<SecurityConfig.Realm> getRealms() {
         final List<SecurityConfig.Realm> result = new ArrayList<>();
-        final List<String> enabledRealms = realmManager.getConfiguration().getRealmNames();
+        final List<String> enabledRealms = realmConfiguration.getRealmNames();
         for (SecurityRealm realm : realmManager.getAvailableRealms()) {
             final SecurityConfig.Realm model = new SecurityConfig.Realm();
             model.name = realm.getId();

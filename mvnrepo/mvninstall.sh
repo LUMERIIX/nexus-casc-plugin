@@ -43,7 +43,7 @@ installFile() {
 
     artifact=$(echo -n "${artifact}" | tr '[:upper:]' '[:lower:]');
     mvn -q install:install-file  -DgroupId="${group}" -DartifactId="${artifact}" -Dversion="${version}" \
-                          ${opts} -Dpackaging=jar -DcreateChecksum=true -DlocalRepositoryPath="${BASE_DIR}";
+                          ${opts} -Dpackaging=jar -DcreateChecksum=true;
 }
 
 if ! [ -f "nexus-oss.tar.gz" ]; then

@@ -5,20 +5,20 @@
     <parent>
         <groupId>org.sonatype.nexus.plugins</groupId>
         <artifactId>nexus-plugins</artifactId>
-        <version>3.45.0-01</version>
+        <version>3.64.0-04</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.asharapov.nexus</groupId>
+    <groupId>io.github.pantovad.nexus</groupId>
     <artifactId>nexus-casc-plugin</artifactId>
-    <version>3.45.0.1</version>
+    <version>3.64.0.4</version>
     <packaging>bundle</packaging>
 
     <name>nexus-casc-plugin</name>
     <description>
         Configuration as code plugin for Sonatype Nexus Repository Manager
     </description>
-    <url>https://github.com/asharapov/nexus-casc-plugin</url>
+    <url>https://github.com/pantovad/nexus-casc-plugin</url>
     <inceptionYear>2019</inceptionYear>
     <developers>
         <developer>
@@ -33,6 +33,10 @@
             <name>Anton Sharapov</name>
             <url>https://github.com/asharapov</url>
         </developer>
+        <developer>
+            <name>Andrija Pantovic</name>
+            <url>https://github.com/pantovad</url>
+        </developer>
     </developers>
     <contributors>
     </contributors>
@@ -44,19 +48,19 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:https://github.com/asharapov/nexus-casc-plugin.git</connection>
-        <developerConnection>scm:git:https://github.com/asharapov/nexus-casc-plugin.git</developerConnection>
-        <url>https://github.com/asharapov/nexus-casc-plugin</url>
+        <connection>scm:git:https://github.com/pantovad/nexus-casc-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/pantovad/nexus-casc-plugin.git</developerConnection>
+        <url>https://github.com/pantovad/nexus-casc-plugin</url>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/asharapov/nexus-casc-plugin/issues</url>
+        <url>https://github.com/pantovad/nexus-casc-plugin/issues</url>
     </issueManagement>
 
     <properties>
-        <nexus.docker.version>3.45.0</nexus.docker.version>
-        <nexus.pkg.version>3.45.0-01</nexus.pkg.version>
+        <nexus.docker.version>3.64.0</nexus.docker.version>
+        <nexus.pkg.version>3.64.0-04</nexus.pkg.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
         <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
@@ -352,39 +356,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>rso-public-grid</id>
-            <url>https://repository.sonatype.org/content/groups/sonatype-public-grid/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>localrepo</id>
-            <url>file://${project.basedir}/mvnrepo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>rso-public-grid</id>
-            <url>https://repository.sonatype.org/content/groups/sonatype-public-grid/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
     <profiles>
         <profile>
