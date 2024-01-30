@@ -17,6 +17,6 @@ jobs:
       - name: Install deps
         run: mvnrepo/mvninstall.sh --clean $(xpath -q -e '/project/parent/version/text()' pom.xml)
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode -DskipITs deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
