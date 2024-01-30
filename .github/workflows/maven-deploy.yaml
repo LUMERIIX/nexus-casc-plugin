@@ -23,3 +23,4 @@ jobs:
         run: mvn --batch-mode -DskipITs -Dbuildsupport-staging.skip=true deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
