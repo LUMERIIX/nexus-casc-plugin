@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.github.pantovad.nexus</groupId>
+    <groupId>org.github.pantovad</groupId>
     <artifactId>nexus-casc-plugin</artifactId>
     <version>3.64.0-04</version>
     <packaging>bundle</packaging>
