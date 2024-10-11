@@ -60,7 +60,7 @@
 
     <properties>
         <nexus.docker.version>3.70.3</nexus.docker.version>
-        <nexus.pkg.version>3.70.3-01</nexus.pkg.version>
+        <nexus.pkg.version>3.70.1-02</nexus.pkg.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
         <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
