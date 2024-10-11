@@ -226,6 +226,49 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+      <repository>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <id>central</id>
+        <name>Central Repository</name>
+        <url>https://repo.maven.apache.org/maven2</url>
+      </repository>
+      <repository>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <id>groovy</id>
+        <name>Groovy Plugins</name>
+        <url>https://groovy.jfrog.io/ui/native/plugins-release</url>
+      </repository>
+    </repositories>
+    <pluginRepositories>
+      <pluginRepository>
+        <releases>
+          <updatePolicy>never</updatePolicy>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <id>groovy</id>
+        <name>Groovy Plugins</name>
+        <url>https://groovy.jfrog.io/ui/native/plugins-release</url>
+      </pluginRepository>
+            <pluginRepository>
+        <releases>
+          <updatePolicy>never</updatePolicy>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <id>central</id>
+        <name>Central Repository</name>
+        <url>https://repo.maven.apache.org/maven2</url>
+      </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <plugins>
             <plugin>
