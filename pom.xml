@@ -11,7 +11,7 @@
 
     <groupId>org.github.pantovad</groupId>
     <artifactId>nexus-casc-plugin</artifactId>
-    <version>3.73.0-01</version>
+    <version>3.73.0-12</version>
     <packaging>bundle</packaging>
 
     <name>nexus-casc-plugin</name>
@@ -60,7 +60,7 @@
 
     <properties>
         <nexus.docker.version>3.73.0</nexus.docker.version>
-        <nexus.pkg.version>3.73.0-01</nexus.pkg.version>
+        <nexus.pkg.version>3.73.0-12</nexus.pkg.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
         <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
