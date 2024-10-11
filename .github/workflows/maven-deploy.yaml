@@ -18,7 +18,7 @@ jobs:
       - name: Install xpath
         run: sudo apt install -y libxml-xpath-perl
       - name: Install deps
-        run: mvnrepo/mvninstall.sh --clean $(xpath -q -e '/project/parent/version/text()' pom.xml)
+        run: mvnrepo/mvninstall.sh --clean $(xpath -q -e '/project/version/text()' pom.xml)
       - name: Deploy package
         run: mvn --batch-mode -DskipITs -Dbuildsupport-staging.skip=true clean deploy
         env:
