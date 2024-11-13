@@ -61,7 +61,7 @@ public class Interpolator extends ComponentSupport {
             }
 
             Pattern subexpr = Pattern.compile(Pattern.quote(matcher.group(0)));
-            str = subexpr.matcher(str).replaceAll(value);
+            str = subexpr.matcher(str).replaceAll(Matcher.quoteReplacement(value));
         }
 
         return str;
