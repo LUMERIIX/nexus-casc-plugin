@@ -288,6 +288,7 @@ public class SecurityConfigHandler {
                 model.connection.searchBase = conn.getSearchBase();
                 model.connection.authScheme = conn.getAuthScheme();
                 model.connection.user = conn.getSystemUsername();
+                model.connection.password = conn.getSystemPassword();
                 model.connection.useTrustStore = conn.getUseTrustStore();
                 model.connection.saslRealm = conn.getSaslRealm();
                 model.connection.connectionTimeout = conn.getConnectionTimeout();
@@ -397,7 +398,7 @@ public class SecurityConfigHandler {
             conn.setSystemUsername(model.user);
             changed = true;
         }
-        if (model.password != null) {
+        if (model.password != null && !model.password.equals(conn.getSystemPassword())) {
             conn.setSystemPassword(model.password);
             changed = true;
         }

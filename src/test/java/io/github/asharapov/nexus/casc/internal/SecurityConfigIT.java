@@ -1,8 +1,5 @@
 package io.github.asharapov.nexus.casc.internal;
 
-import org.sonatype.nexus.crypto.secrets.Secret;
-import org.sonatype.nexus.crypto.secrets.SecretsService;
-
 import io.github.asharapov.nexus.casc.internal.junit.IntegrationTest;
 import io.github.asharapov.nexus.casc.internal.model.AnonymousAccessVO;
 import io.github.asharapov.nexus.casc.internal.model.CertificateVO;
@@ -64,7 +61,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SecurityConfigIT {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfigIT.class);
-    private final SecretsService secretsService;
 
     @Inject
     private Yaml yaml;
@@ -74,8 +70,7 @@ public class SecurityConfigIT {
     private NexusServer nexusServer;
     private NexusAPI api;
 
-    public SecurityConfigIT(final SecretsService secretsService) {
-        this.secretsService = secretsService;
+    public SecurityConfigIT() {
     }
 
 
