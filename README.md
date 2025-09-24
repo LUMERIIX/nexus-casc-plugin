@@ -167,3 +167,17 @@ To show the generated report, you can use the command below, but it is better to
 ./.allure/allure-2.20.1/bin/allure open -h localhost -p 35000 target/site/allure-maven-plugin
 ```
 
+##### Workaround: 3.72.0-04
+The following dependencies were removed from the public Maven repository. To build the project, you need to extract them from the Nexus installation package and install them in your local Maven repository.
+
+use the following command to install the .jar file in your local Maven repository:
+```shell script
+mvn install:install-file -Dfile=path-to-file.jar -DgroupId=org.sonatype.nexus -DartifactId=artifact-id -Dversion=<version> -Dpackaging=jar -DgeneratePom=true
+```
+
+**Dependencies to be installed from Nexus installation package:**
+* nexus-ldap-plugin (install as `com.sonatype.nexus.plugins:nexus-ldap-plugin`)
+* nexus-licensing-extension (install as `com.sonatype.nexus:nexus-licensing-extension`)
+* nexus-healthcheck-base (install as `com.sonatype.nexus.plugins:nexus-healthcheck-base`)
+
+They can be found in nexus-<version>/system/com/sonatype/nexus/plugins/* and nexus-<version>/system/com/sonatype/nexus/* directories of the Nexus installation package respectively.
