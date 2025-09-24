@@ -107,13 +107,6 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.sonatype.nexus</groupId>
-            <artifactId>nexus-crypto</artifactId>
-            <version>3.72.0-04</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.sonatype.nexus.plugins</groupId>
             <artifactId>nexus-ldap-plugin</artifactId>
