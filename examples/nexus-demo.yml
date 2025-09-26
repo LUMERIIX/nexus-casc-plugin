@@ -42,22 +42,22 @@ systemConfig:
     useTrustStore: false
     timeout: 10
   tasks:
-    - type: casc.export
-      name: casc.export
-      enabled: true
-      visible: true
-      exposed: true
-      recoverable: false
-      alertEmail: testusr2020+test@mail.ru
-      alertCondition: FAILURE
-      attrs:
-        casc.export.empty-properties: 'true'
-        casc.export.empty-collections: 'true'
-        casc.export.hidden-tasks: 'false'
-        casc.export.readonly-objects: 'false'
-        casc.export.path: /nexus-data/casc/export/nexus.yml
-      schedule:
-        type: manual
+    #- type: casc.export
+    #  name: casc.export
+    #  enabled: true
+    #  visible: true
+    #  exposed: true
+    #  recoverable: false
+    #  alertEmail: testusr2020+test@mail.ru
+    #  alertCondition: FAILURE
+    #  attrs:
+    #    casc.export.empty-properties: 'true'
+    #    casc.export.empty-collections: 'true'
+    #    casc.export.hidden-tasks: 'false'
+    #    casc.export.readonly-objects: 'false'
+    #    casc.export.path: /nexus-data/casc/export/nexus.yml
+    #  schedule:
+    #    type: manual
   pruneOtherExposedTasks: false
   capabilities:
     - type: rapture.settings
