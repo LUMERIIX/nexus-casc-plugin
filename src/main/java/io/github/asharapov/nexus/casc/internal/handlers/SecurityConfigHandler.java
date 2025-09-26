@@ -8,6 +8,8 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.nexus.crypto.secrets.Secret;
+import org.sonatype.nexus.crypto.secrets.SecretsService;
 import org.sonatype.nexus.ldap.persist.LdapConfigurationManager;
 import org.sonatype.nexus.ldap.persist.LdapServerNotFoundException;
 import org.sonatype.nexus.ldap.persist.entity.Connection;
@@ -98,6 +100,7 @@ public class SecurityConfigHandler {
     private final SecuritySystem securitySystem;
     private final LdapConfigurationManager ldapConfigurationManager;
     private final TrustStore trustStore;
+    private final SecretsService secrets;
 
     @Inject
     SecurityConfigHandler(
@@ -107,7 +110,8 @@ public class SecurityConfigHandler {
             final SecurityApi securityApi,
             final SecuritySystem securitySystem,
             final LdapConfigurationManager ldapConfigurationManager,
-            final TrustStore trustStore) {
+            final TrustStore trustStore,
+            final SecretsService secrets) {
         this.anonymousManager = anonymousManager;
         this.realmManager = realmManager;
         this.realmConfiguration = realmConfiguration;
@@ -115,6 +119,46 @@ public class SecurityConfigHandler {
         this.securitySystem = securitySystem;
         this.ldapConfigurationManager = ldapConfigurationManager;
         this.trustStore = trustStore;
+        this.secrets = secrets;
+    }
+
+    private static void wipe(final char[] chars) {
+        if (chars != null) {
+            Arrays.fill(chars, '\0');
+        }
+    }
+
+    private String reveal(final Secret secret) {
+        if (secret == null) {
+            return null;
+        }
+        char[] decrypted = null;
+        try {
+            decrypted = secret.decrypt();
+            return new String(decrypted);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to decrypt LDAP secret", e);
+        }
+        finally {
+            wipe(decrypted);
+        }
+    }
+
+    private Secret toSecret(final String purpose, final String plaintext, final String userId) {
+        if (plaintext == null) {
+            return null;
+        }
+        char[] chars = plaintext.toCharArray();
+        try {
+            return secrets.encrypt(purpose, chars, userId);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to encrypt secret for " + purpose, e);
+        }
+        finally {
+            wipe(chars);
+        }
     }
 
     public SecurityConfig load(final Options opts) {
@@ -288,7 +332,7 @@ public class SecurityConfigHandler {
                 model.connection.searchBase = conn.getSearchBase();
                 model.connection.authScheme = conn.getAuthScheme();
                 model.connection.user = conn.getSystemUsername();
-                model.connection.password = conn.getSystemPassword();
+                model.connection.password = reveal(conn.getSystemPassword());
                 model.connection.useTrustStore = conn.getUseTrustStore();
                 model.connection.saslRealm = conn.getSaslRealm();
                 model.connection.connectionTimeout = conn.getConnectionTimeout();
@@ -398,9 +442,19 @@ public class SecurityConfigHandler {
             conn.setSystemUsername(model.user);
             changed = true;
         }
-        if (model.password != null && !model.password.equals(conn.getSystemPassword())) {
-            conn.setSystemPassword(model.password);
-            changed = true;
+        if (model.password != null) {
+            final String trimmed = model.password.trim();
+            if (trimmed.isEmpty()) {
+                throw new IllegalArgumentException("ldap.systemPassword is empty/whitespace");
+            }
+            final String currentPassword = reveal(conn.getSystemPassword());
+            if (!Objects.equals(trimmed, currentPassword)) {
+                // failing with java.lang.IllegalArgumentException: connection.systemPassword in org.sonatype.nexus.ldap.persist.internal.Validator.validate(Validator.java:54) if not setting setRawSystemPassword().
+                // But found no documentation about it.
+                conn.setRawSystemPassword(trimmed);
+                conn.setSystemPassword(toSecret("ldap.systemPassword", trimmed, model.user));
+                changed = true;
+            }
         }
         if (model.useTrustStore != null && model.useTrustStore != conn.getUseTrustStore()) {
             conn.setUseTrustStore(model.useTrustStore);
@@ -832,15 +886,20 @@ public class SecurityConfigHandler {
                 throw new RuntimeException(e);
             } catch (UserNotFoundException e) {
                 log.info("User {} does not yet exist. Creating it...", key);
-                securityApi.addUser(
-                        model.id,
-                        model.firstName,
-                        model.lastName,
-                        model.email,
-                        model.active != null && model.active,
-                        model.password,
-                        model.roles != null ? model.roles.stream().map(m -> m.id).collect(Collectors.toList()) : Collections.emptyList()
-                );
+                try {
+                    securityApi.addUser(
+                            model.id,
+                            model.firstName,
+                            model.lastName,
+                            model.email,
+                            model.active != null && model.active,
+                            model.password,
+                            model.roles != null ? model.roles.stream().map(m -> m.id).collect(Collectors.toList()) : Collections.emptyList()
+                    );
+                } catch (NoSuchUserManagerException ex) {
+                    log.error("Failed to create user {}: {}", key, ex.getMessage(), ex);
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
