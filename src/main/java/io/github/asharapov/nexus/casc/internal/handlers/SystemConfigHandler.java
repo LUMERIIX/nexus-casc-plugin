@@ -4,6 +4,7 @@ import com.sonatype.nexus.clm.ClmAuthenticationType;
 import com.sonatype.nexus.clm.ClmConfiguration;
 import com.sonatype.nexus.clm.ClmConnector;
 import com.sonatype.nexus.licensing.ext.LicenseManager;
+import com.sonatype.nexus.licensing.ext.LicenseSource;
 import io.github.asharapov.nexus.casc.internal.Utils;
 import io.github.asharapov.nexus.casc.internal.model.SystemConfig;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.sonatype.nexus.capability.CapabilityIdentity;
 import org.sonatype.nexus.capability.CapabilityReference;
 import org.sonatype.nexus.capability.CapabilityRegistry;
 import org.sonatype.nexus.capability.CapabilityType;
+import org.sonatype.nexus.crypto.secrets.Secret;
 import org.sonatype.nexus.email.EmailConfiguration;
 import org.sonatype.nexus.email.EmailManager;
 import org.sonatype.nexus.formfields.FormField;
@@ -101,6 +103,32 @@ public class SystemConfigHandler {
         this.clmConnector = clmConnector;
         this.taskScheduler = taskScheduler;
         this.licenseManager = licenseManager;
+    }
+
+    private static void wipe(char[] cs) {
+        if (cs != null) {
+            Arrays.fill(cs, '\0');
+        }
+    }
+
+    private String reveal(final Object secret) {
+        if (secret == null) {
+            return null;
+        }
+        if (secret instanceof Secret) {
+            char[] decrypted = null;
+            try {
+                decrypted = ((Secret) secret).decrypt();
+                return new String(decrypted);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Failed to decrypt secret", e);
+            }
+            finally {
+                wipe(decrypted);
+            }
+        }
+        return secret.toString();
     }
 
     public SystemConfig load(Options opts) {
@@ -241,12 +269,12 @@ public class SystemConfigHandler {
             final UsernameAuthenticationConfiguration unauthcfg = (UsernameAuthenticationConfiguration) authcfg;
             model.auth = new SystemConfig.ProxyAuthentication();
             model.auth.user = unauthcfg.getUsername();
-            model.auth.password = unauthcfg.getPassword();
+            model.auth.password = reveal(unauthcfg.getPassword());
         } else if (authcfg instanceof NtlmAuthenticationConfiguration) {
             final NtlmAuthenticationConfiguration ntauthcfg = (NtlmAuthenticationConfiguration) authcfg;
             model.auth = new SystemConfig.ProxyAuthentication();
             model.auth.user = ntauthcfg.getUsername();
-            model.auth.password = ntauthcfg.getPassword();
+            model.auth.password = reveal(ntauthcfg.getPassword());
             model.auth.ntlmDomain = ntauthcfg.getDomain();
             model.auth.ntlmHost = ntauthcfg.getHost();
         }
@@ -345,7 +373,7 @@ public class SystemConfigHandler {
         model.host = cfg.getHost();
         model.port = cfg.getPort();
         model.userName = cfg.getUsername();
-        model.password = cfg.getPassword();
+        model.password = reveal(cfg.getPassword());
         model.fromAddress = cfg.getFromAddress();
         model.subjectPrefix = cfg.getSubjectPrefix();
         model.startTlsEnabled = cfg.isStartTlsEnabled();
@@ -362,6 +390,7 @@ public class SystemConfigHandler {
         }
         final EmailConfiguration newCfg = emailManager.getConfiguration().copy();
         boolean changed = false;
+        String passwordToSet = null;
         if (model.enabled != null && model.enabled != newCfg.isEnabled()) {
             newCfg.setEnabled(model.enabled);
             changed = true;
@@ -378,9 +407,16 @@ public class SystemConfigHandler {
             newCfg.setUsername(model.userName);
             changed = true;
         }
-        if (model.password != null && !model.password.equals(newCfg.getPassword())) {
-            newCfg.setPassword(model.password);
-            changed = true;
+        if (model.password != null) {
+            final String trimmed = model.password.trim();
+            if (trimmed.isEmpty()) {
+                throw new IllegalArgumentException("smtp.password is empty/whitespace");
+            }
+            final String currentPassword = reveal(newCfg.getPassword());
+            if (!Objects.equals(trimmed, currentPassword)) {
+                passwordToSet = trimmed;
+                changed = true;
+            }
         }
         if (model.fromAddress != null && !model.fromAddress.equals(newCfg.getFromAddress())) {
             newCfg.setFromAddress(model.fromAddress);
@@ -410,9 +446,9 @@ public class SystemConfigHandler {
             newCfg.setNexusTrustStoreEnabled(model.nexusTrustStoreEnabled);
             changed = true;
         }
-        if (changed) {
+        if (changed || passwordToSet != null) {
             log.info("Updating smtp settings ...");
-            emailManager.setConfiguration(newCfg);
+            emailManager.setConfiguration(newCfg, passwordToSet);
         }
     }
 
@@ -840,7 +876,7 @@ public class SystemConfigHandler {
                 throw new RuntimeException("Can't load license from uri '" + model.installFrom + "' : " + e.getMessage(), e);
             }
             try {
-                licenseManager.installLicense(licenseData);
+                licenseManager.installLicense(licenseData, LicenseSource.API);
                 log.info("Sonatype Nexus Pro license installed successfully.");
             } catch (Exception e) {
                 throw new RuntimeException("Can't install license from uri '" + model.installFrom + "' : " + e.getMessage(), e);
