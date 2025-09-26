@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nexus:
     image: sonatype/nexus3:${NEXUS_DOCKER_VERSION}
-    container_name: nexus
+    container_name: nexus_1
 #    privileged: true
     environment:
       BASE_URL: 'http://localhost:8081'
@@ -16,7 +16,7 @@ services:
       - ./nexus-demo.yml:/opt/nexus-demo.yml:ro,Z
       - ./certs:/opt/certs:ro,Z
       - ./sonatype-repository-manager-trial.lic:/opt/sonatype-repository-manager-trial.lic:ro,Z  # use the current version of the license to test its installation
-      - nexus-data:/nexus-data
+      - nexus-data_1:/nexus-data
     secrets:
       - nexus_admin
       - nexus_master
@@ -32,7 +32,7 @@ services:
       - "8083:8083"
       - "5005:5005"
     networks:
-      - nexus
+      - nexus_1
     depends_on:
       - openldap
       - minio
@@ -57,7 +57,7 @@ services:
       - "1389:389"
       - "1636:636"
     networks:
-      - nexus
+      - nexus_1
     restart: unless-stopped
 
   minio:
@@ -82,7 +82,7 @@ services:
       timeout: 20s
       retries: 3
     networks:
-      nexus:
+      nexus_1:
         aliases:
           - store1.minio
     restart: unless-stopped
@@ -120,7 +120,7 @@ secrets:
     file: ./.secrets/iq_admin
 
 volumes:
-  nexus-data:
+  nexus-data_1:
     driver: local
   iq-data:
     driver: local
@@ -134,5 +134,5 @@ volumes:
     driver: local
 
 networks:
-  nexus:
+  nexus_1:
     driver: bridge
