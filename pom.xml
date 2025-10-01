@@ -376,6 +376,19 @@
                     <allureDownloadUrl>https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${allure.version}/allure-commandline-${allure.version}.zip</allureDownloadUrl>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Must match the parent's execution id exactly -->
+                        <id>buildsupport-bestpractices</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
         </plugins>
     </build>
 
