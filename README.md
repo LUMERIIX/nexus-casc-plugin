@@ -146,6 +146,10 @@ Use `${file:/path/to/a/file}` to include the contents of a file.
 4. docker-compose (to run the examples)
 
 #### Building the plugin
+Some dependencies have been removed from the public Maven repository. To build the project, you need to extract them from the Nexus installation package and prepopulate to the local maven repository
+```shell script
+./mvnrepo/mvninstall.sh <version>
+```
 
 To build a plugin, use the command:
 ```shell script
