@@ -5,6 +5,7 @@ import org.sonatype.nexus.formfields.CheckboxFormField;
 import org.sonatype.nexus.formfields.FormField;
 import org.sonatype.nexus.formfields.StringTextFormField;
 import org.sonatype.nexus.scheduling.TaskDescriptorSupport;
+import org.sonatype.nexus.common.upgrade.AvailabilityVersion;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,6 +18,7 @@ import javax.inject.Singleton;
  */
 @Named
 @Singleton
+@AvailabilityVersion(from = "1.0")
 public class CascExportTaskDescriptor extends TaskDescriptorSupport {
 
     public static final String TYPE_ID = "casc.export";
